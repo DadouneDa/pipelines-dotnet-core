@@ -27,7 +27,8 @@ pipeline {
 
     stage('Kill_App') {
       steps {
-        sh 'pkill -f node'
+        //sh 'pkill -f node'
+        sh 'killall dotnet'
       }
     }
 
