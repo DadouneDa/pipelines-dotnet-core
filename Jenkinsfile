@@ -8,6 +8,7 @@ pipeline {
   stages {
     stage('Checkout_git') {
       steps {
+        cleanWs()
         git(url: 'https://github.com/DadouneDa/pipelines-dotnet-core.git', branch: 'master', changelog: true, poll: true, credentialsId: 'dd_github')
       }
     }
@@ -33,6 +34,10 @@ pipeline {
     stage('Package') {
       steps {
         sh 'dotnet publish'
+        sh 'zip -r package.zip .'
+        archiveArtifacts(artifacts: 'package.zip', onlyIfSuccessful: true)
+        cleanWs(cleanWhenSuccess: true)
+        slackSend(channel: 'dd_devops', color: '#3EA652', message: "Success: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
       }
     }
 
